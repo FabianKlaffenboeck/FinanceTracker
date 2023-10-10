@@ -2,7 +2,10 @@ package at.fklab
 
 import at.fklab.model.Transaction
 import at.fklab.plugins.configureDatabases
-import at.fklab.services.TransactionService
+import at.fklab.services.FileReader
+import at.fklab.services.FileTag
+import at.fklab.services.ParsingTarget
+import java.io.File
 
 fun main(args: Array<String>) {
     println("test")
@@ -15,21 +18,8 @@ fun main(args: Array<String>) {
 
     configureDatabases(dbUrl, dbUser, dbPW, initDB, populateDB)
 
-    for (i in 1..5) {
-        TransactionService().add(
-            Transaction(
-                id = null,
-                value = null,
-                currency = null,
-                category = null,
-                usage = null,
-                transactionPartner = null,
-                transactionDate = null,
-                bookingId = null,
-                location = null
-            )
-        )
-    }
 
+    val parsingTargets = listOf(ParsingTarget(tag = FileTag.JSON, file = File("")))
 
+    FileReader().readFiles(parsingTargets)
 }
