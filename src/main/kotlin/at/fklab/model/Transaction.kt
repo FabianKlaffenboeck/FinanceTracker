@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.datetime
+import java.time.LocalDateTime
 
 
 object Transactions : IntIdTable("Transactions") {
@@ -16,7 +17,7 @@ object Transactions : IntIdTable("Transactions") {
     val usage = text("usage").nullable()
 
     val transactionPartner = text("transactionPartner").nullable()
-    val transactionDate = text("transactionDate").nullable()
+    val transactionDate = datetime("transactionDate").nullable()
 
     val bookingId = text("bookingId").nullable()
     val location = text("location").nullable()
@@ -54,7 +55,7 @@ class Transaction(
     var category: String?,
     var usage: String?,
     var transactionPartner: String?,
-    var transactionDate: String?,
+    var transactionDate: LocalDateTime?,
     var bookingId: String?,
     var location: String?
 )
