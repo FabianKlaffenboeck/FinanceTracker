@@ -4,7 +4,7 @@ import at.fklab.model.Transaction
 import java.io.File
 
 enum class FileTag {
-    NON,JSON, CSV
+    NON, JSON, CSV
 }
 
 class ParsingTarget(
@@ -17,7 +17,7 @@ class FileParser {
     fun parsFile(parsingTargets: List<ParsingTarget>): List<Transaction> {
         val resultList: MutableList<Transaction> = mutableListOf()
 
-        parsingTargets.forEach { parsingTarget ->
+        parsingTargets.forEach { parsingTarget: ParsingTarget ->
             println(parsingTarget)
 
             when (parsingTarget.tag) {
@@ -47,9 +47,30 @@ class FileParser {
 
     private fun parsCsv(parsingTarget: ParsingTarget): List<Transaction> {
         val outputList: MutableList<Transaction> = mutableListOf()
-        var content = parsingTarget.file.bufferedReader().readLines()
+        val content = parsingTarget.file.bufferedReader().readLines()
+
+        content.forEach { line: String ->
+
+            val columns = line.split(';')
+
+            columns[1]
+
+            var tmpTransaction = Transaction(
+                id = null,
+                value = columns[0].toFloat(),
+                currency = columns[4],
+                category = null,
+                usage = null,
+                transactionPartner = null,
+                transactionDate = null,
+                bookingId = null,
+                location = null,
+                cardType = null,
+            )
+
+            outputList.add(tmpTransaction)
+        }
 
         return outputList
     }
-
 }

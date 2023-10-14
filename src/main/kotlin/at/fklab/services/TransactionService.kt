@@ -29,8 +29,10 @@ class TransactionService {
             usage = transaction.usage
             transactionPartner = transaction.transactionPartner
             transactionDate = transaction.transactionDate
+            debitDate = transaction.debitDate
             bookingId = transaction.bookingId
             location = transaction.location
+            cardType = transaction.cardType
 
             createdAt = LocalDateTime.now()
         }.toTransaction()
@@ -45,8 +47,10 @@ class TransactionService {
         TransactionEntity[notNullId].usage = transaction.usage
         TransactionEntity[notNullId].transactionPartner = transaction.transactionPartner
         TransactionEntity[notNullId].transactionDate = transaction.transactionDate
+        TransactionEntity[notNullId].debitDate = transaction.debitDate
         TransactionEntity[notNullId].bookingId = transaction.bookingId
         TransactionEntity[notNullId].location = transaction.location
+        TransactionEntity[notNullId].cardType = transaction.cardType
 
         TransactionEntity[notNullId].updatedAt = LocalDateTime.now()
         TransactionEntity[notNullId].toTransaction()
