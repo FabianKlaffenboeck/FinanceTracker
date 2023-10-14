@@ -4,7 +4,9 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -17,8 +19,8 @@ object Transactions : IntIdTable("Transactions") {
     val usage = text("usage").nullable()
 
     val transactionPartner = text("transactionPartner").nullable()
-    val transactionDate = datetime("transactionDate").nullable()
-    val debitDate = datetime("debitDate").nullable()
+    val transactionDate = date("transactionDate").nullable()
+    val debitDate = date("debitDate").nullable()
 
     val bookingId = text("bookingId").nullable()
     val location = text("location").nullable()
@@ -77,8 +79,8 @@ class Transaction(
     var usage: String?,
 
     var transactionPartner: String?,
-    var transactionDate: LocalDateTime?,
-    var debitDate: LocalDateTime?,
+    var transactionDate: LocalDate?, // Date of payment at terminal / online
+    var debitDate: LocalDate?, // Date of money removal from account
 
     var bookingId: String?,
     var location: String?,
