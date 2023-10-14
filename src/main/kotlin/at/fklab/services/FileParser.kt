@@ -4,7 +4,7 @@ import at.fklab.model.Transaction
 import java.io.File
 
 enum class FileTag {
-    JSON, CSV
+    NON,JSON, CSV
 }
 
 class ParsingTarget(
@@ -12,9 +12,9 @@ class ParsingTarget(
     var file: File,
 )
 
-class FileReader {
+class FileParser {
 
-    fun readFiles(parsingTargets: List<ParsingTarget>): List<Transaction> {
+    fun parsFile(parsingTargets: List<ParsingTarget>): List<Transaction> {
         val resultList: MutableList<Transaction> = mutableListOf()
 
         parsingTargets.forEach { parsingTarget ->
