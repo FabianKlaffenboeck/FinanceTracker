@@ -1,10 +1,13 @@
 package at.fklab.services
 
 import at.fklab.model.Transaction
+import com.google.gson.Gson
+import com.google.gson.internal.LinkedTreeMap
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
+
 
 enum class FileTag {
     NON, JSON, CSV
@@ -41,7 +44,32 @@ class FileParser {
 
     private fun parsJson(parsingTarget: ParsingTarget): List<Transaction> {
         val outputList: MutableList<Transaction> = mutableListOf()
-        var content = parsingTarget.file.readText(Charsets.UTF_8)
+        val content = parsingTarget.file.readText(Charsets.UTF_8)
+
+        val map = Gson().fromJson<Map<*, *>>(content, MutableMap::class.java)
+
+        val dataList = map["list"] as ArrayList<Map<String, String>>
+
+        dataList.forEach { it ->
+            val tmpValues = it["betrag"] as LinkedTreeMap<String, String>
+
+//            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val tmpTransaction = Transaction(
+                id = null,
+                value = (tmpValues["amount"] as Double).toFloat(),
+                currency = tmpValues["currency"],
+                category = it["kategorisierungsart"],
+                usage = it["verwendungszweckZeile1"],
+                transactionPartner = it["auftraggeberIban"],
+                transactionDate = LocalDate.parse(it["buchungstag"]?.substring(0, 10), formatter),
+                debitDate = LocalDate.parse(it["einfuegezeit"]?.substring(0, 10), formatter),
+                bookingId = it["id"],
+                location = null,
+                cardType = null
+            )
+            outputList.add(tmpTransaction)
+        }
 
         return outputList
     }
@@ -51,10 +79,8 @@ class FileParser {
         val content = parsingTarget.file.bufferedReader().readLines().toMutableList()
 
         content[0] = content[0].drop(1) //FIXME drop is used because of a zero with character
-
         content.forEach { line: String ->
             val columns = line.split(';')
-
 
             val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
             val tmpTransaction = Transaction(
