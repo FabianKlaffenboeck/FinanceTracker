@@ -7,7 +7,6 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 object Transactions : IntIdTable("Transactions") {
@@ -26,6 +25,8 @@ object Transactions : IntIdTable("Transactions") {
     val location = text("location").nullable()
 
     val cardType = text("cardType").nullable()
+
+    val sourceFile = text("sourceFile").nullable()
 
     val createdAt = datetime("createdAt").nullable()
     val updatedAt = datetime("updatedAt").nullable()
@@ -50,6 +51,8 @@ class TransactionEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var cardType by Transactions.cardType
 
+    var sourceFile by Transactions.sourceFile
+
     var createdAt by Transactions.createdAt
     var updatedAt by Transactions.updatedAt
     var deletedAt by Transactions.deletedAt
@@ -65,7 +68,8 @@ class TransactionEntity(id: EntityID<Int>) : IntEntity(id) {
         debitDate,
         bookingId,
         location,
-        cardType
+        cardType,
+        sourceFile
     )
 }
 
@@ -85,5 +89,7 @@ class Transaction(
     var bookingId: String?,
     var location: String?,
 
-    var cardType: String?
+    var cardType: String?,
+
+    var sourceFile: String?
 )

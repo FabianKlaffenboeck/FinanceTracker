@@ -33,6 +33,7 @@ class TransactionService {
             bookingId = transaction.bookingId
             location = transaction.location
             cardType = transaction.cardType
+            sourceFile = transaction.sourceFile
 
             createdAt = LocalDateTime.now()
         }.toTransaction()
@@ -51,6 +52,7 @@ class TransactionService {
         TransactionEntity[notNullId].bookingId = transaction.bookingId
         TransactionEntity[notNullId].location = transaction.location
         TransactionEntity[notNullId].cardType = transaction.cardType
+        TransactionEntity[notNullId].sourceFile = transaction.sourceFile
 
         TransactionEntity[notNullId].updatedAt = LocalDateTime.now()
         TransactionEntity[notNullId].toTransaction()
