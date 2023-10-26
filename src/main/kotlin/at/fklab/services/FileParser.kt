@@ -47,42 +47,42 @@ class FileParser {
         val content = parsingTarget.file.readText(Charsets.UTF_8)
 
         val map = Gson().fromJson<Map<*, *>>(content, MutableMap::class.java)
-
         val dataList = map["list"] as ArrayList<Map<String, String>>
 
         dataList.forEach { it ->
-            val tmpValues = it["betrag"] as LinkedTreeMap<String, String>
 
-//            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            val tmpValues = it["betrag"] as LinkedTreeMap<String, String>
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
             val tmpTransaction = Transaction(
                 id = null,
                 value = (tmpValues["amount"] as Double).toFloat(),
                 currency = tmpValues["currency"],
                 category = it["kategorisierungsart"],
-                usage = it["verwendungszweckZeile1"],
-                transactionPartner = it["auftraggeberIban"],
+                usage = it["verwendungszweckZeile1"] ?: it["geschaeftsfallCode"],
+                transactionPartner = it["auftraggeberIban"] ?: it["haendlername"],
                 transactionDate = LocalDate.parse(it["buchungstag"]?.substring(0, 10), formatter),
                 debitDate = LocalDate.parse(it["einfuegezeit"]?.substring(0, 10), formatter),
                 bookingId = it["id"],
-                location = null,
-                cardType = null
+                location = it["haendlerort"],
+                cardType = it["kartenId"] ?: it["iban"],
+                sourceFile = parsingTarget.file.name
             )
             outputList.add(tmpTransaction)
         }
-
         return outputList
     }
 
     private fun parsCsv(parsingTarget: ParsingTarget): List<Transaction> {
         val outputList: MutableList<Transaction> = mutableListOf()
         val content = parsingTarget.file.bufferedReader().readLines().toMutableList()
-
         content[0] = content[0].drop(1) //FIXME drop is used because of a zero with character
-        content.forEach { line: String ->
-            val columns = line.split(';')
 
+        content.forEach { line: String ->
+
+            val columns = line.split(';')
             val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
             val tmpTransaction = Transaction(
                 id = null,
                 value = columns[3].replace(',', '.').toFloat(),
@@ -97,11 +97,10 @@ class FileParser {
                 bookingId = null,
                 location = null,
                 cardType = fileNaneToIban(parsingTarget.file.name),
+                sourceFile = parsingTarget.file.name
             )
-
             outputList.add(tmpTransaction)
         }
-
         return outputList
     }
 
