@@ -20,7 +20,23 @@ class ParsingTarget(
 
 class FileParser {
 
-    fun parsFile(parsingTargets: List<ParsingTarget>): List<Transaction> {
+    fun pars(fileDIR: String): List<Transaction> {
+        return removeDuplicates(parsFile(generateTargets(fileDIR)))
+    }
+
+    private fun removeDuplicates(inputData: List<Transaction>): List<Transaction> {
+        var outputList = mutableListOf<Transaction>()
+
+        inputData.forEach { data ->
+            if (outputList.none { (it.value == data.value) && (it.usage == data.usage) && (it.category == data.category) && (it.cardType == data.cardType) }) {
+                outputList.add(data)
+            }
+        }
+
+        return outputList
+    }
+
+    private fun parsFile(parsingTargets: List<ParsingTarget>): List<Transaction> {
         val resultList: MutableList<Transaction> = mutableListOf()
 
         parsingTargets.forEach { parsingTarget: ParsingTarget ->
@@ -40,6 +56,22 @@ class FileParser {
         }
 
         return resultList
+    }
+
+    private fun generateTargets(fileDIR: String): MutableList<ParsingTarget> {
+        val parsingTargets: MutableList<ParsingTarget> = mutableListOf()
+        File(fileDIR).listFiles()?.forEach { file ->
+            var fileTag: FileTag = FileTag.NON
+
+            if (file.path.contains("json")) {
+                fileTag = FileTag.JSON
+            }
+            if (file.path.contains("csv")) {
+                fileTag = FileTag.CSV
+            }
+            parsingTargets.add(ParsingTarget(tag = fileTag, file = File(file.path)))
+        }
+        return parsingTargets
     }
 
     private fun parsJson(parsingTarget: ParsingTarget): List<Transaction> {
