@@ -1,0 +1,36 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  BUILDX_VERSION: "v0.6.1"
+  BUILDX_ARCH: "linux-amd64"
+
+.gradle-job: &gradle-job
+  image: gradle:7.5-jdk18
+
+test:
+  <<: *gradle-job
+  stage: test
+  script:
+    - gradle test
+  artifacts:
+    paths:
+      - build/reports/tests/test
+    expire_in: 2 hours
+    expose_as: 'Unit Test Reports'
+
+build:
+  <<: *gradle-job
+  stage: build
+  script:
+    - gradle installDist
+  artifacts:
+    paths:
+      - build/
+    expire_in: 2 hours
+  cache:
+    paths:
+      - build/
